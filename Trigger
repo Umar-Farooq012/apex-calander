@@ -1,0 +1,21 @@
+create or replace trigger "CRM_SETUP_MAST_T1"
+BEFORE
+insert or update or delete on "CRM_SETUP_MAST"
+for each row
+begin
+ if inserting then
+      if :NEW.LEAD_ID is null then
+         SELECT NVL(MAX(A.LEAD_ID),0)+1 INTO :NEW.LEAD_ID FROM 
+CRM_SETUP_MAST
+ A ;
+         
+      end if;
+           :NEW.CREATED_ON    := localtimestamp;
+           :NEW.CREATED_BY := nvl(v('APP_USER'),USER);
+   end if;
+   
+   if inserting or updating then
+      :NEW.UPDATED_ON    := localtimestamp;
+      :NEW.UPDATED_BY := nvl(v('APP_USER'),USER);
+   end if;
+end;
