@@ -1,1 +1,154 @@
-null;
+DECLARE
+V NUMBER;
+BEGIN
+SELECT  COUNT(*) INTO V FROM CRM_SETUP_MAST WHERE ASSIGNED_TO =:P_USER_ID
+AND CRM_TASK IS NOT NULL;
+IF (V= 0  AND :P_USER_ID= 'UMAR.FAROOQ' ) THEN
+RETURN 
+     TRUE;
+   
+ELSE
+RETURN FALSE;
+
+
+END IF;
+END;
+
+ye query hm ne button ko hide karwany ke liye lagai ha different users sy 
+===============================================================================
+ye query is liye lagai ha ke hm ko sary users ka data show ho 
+
+
+SELECT
+    
+    CRM.LEAD_ID,
+    CRM.CONTACT_NO,
+    
+  	
+   CRM.ASSIGNED_TO||' - '|| CASE WHEN ACTIVE='N' THEN  CRM.TASK_TITLE ||' -  '|| 'PENDING' || ' - '||CRM.RESUME_DATE||' '||CRM.STAGES
+    else CRM.RESUME_DATE||' - '||CRM.TASK_TITLE || ' - ' ||CRM.STATUS|| ' - '||CRM.RESUME_DATE||' '||CRM.STAGES end   ACTIVE,
+    
+   CASE WHEN STATUS = 'IN-PROCESS' THEN 'apex-cal-gray'
+   when STATUS = 'COMPLETED' THEN 'apex-cal-yellow'
+   when STATUS = 'PENDING' THEN 'apex-cal-orange'
+   end as css_class,
+
+
+
+    CRM. STATUS,
+     
+    CRM.REMARKS,
+    CRM.EMAIL,
+    CRM.CITY,
+    CRM.CREATED_ON,
+    CRM.SOURCES,
+    CRM.ASSIGNED_TO,
+    CRM.TASK_NO,
+  
+    
+    CRM.TRANSFER_REASONS,
+    CRM.ASSIGNED_BY,
+    CRM.BUSINESS_TYPE,
+    
+    CRM.SEEN_TYPE,
+  
+    CRM.LEAD_TIME,
+    CRM.JOB_TITLE,
+    CRM.COUNTRY,
+    CRM.SOURCE_TYPE,
+    CRM.NEXT_MEETINGS,
+    CRM.CREATED_BY,
+    CRM.OTHER_CITY,
+    CRM.UPDATED_ON,
+    CRM.DEALER_NAME,
+    CRM.DEALER_NUMBER,
+    
+    CRM.UPDATED_BY,
+    CRM.DEALER_ID,
+    
+    CRM.SITE_ID
+  
+FROM CRM_SETUP_MAST CRM 
+
+WHERE
+  (NVL(CRM.ASSIGNED_TO, CRM.CREATED_BY) IN 
+    (CASE 
+      WHEN :P_USER_ID <> 'UMAR.FAROOQ' THEN :P_USER_ID 
+      ELSE NVL(CRM.ASSIGNED_TO, CRM.CREATED_BY) 
+    END))
+ AND CRM.ASSIGNED_TO = NVL(:P56_USER,CRM.ASSIGNED_TO)                     
+
+AND CRM.CRM_TASK IS NOT NULL
+===========================================================================
+
+
+
+
+
+
+
+
+
+
+create or replace TRIGGER DGMS.T_CRM_SETUP_MAST_HISTORY
+   AFTER DELETE OR INSERT OR UPDATE
+   ON DGMS.CRM_SETUP_MAST
+   REFERENCING NEW AS NEW OLD AS OLD
+   FOR EACH ROW
+BEGIN
+   IF INSERTING OR UPDATING
+   THEN
+         INSERT INTO CRM_SETUP_LOG (
+                LEAD_ID  ,
+                TABLE_NAMES  ,
+                CREATED_ON    ,
+                SOURCES   ,
+                ASSIGNED_TO       ,
+                TASK_NO           ,
+                REMARKS           ,
+                STAGES            ,
+                TRANSFER_REASONS  ,
+                ASSIGNED_BY       ,
+                BUSINESS_TYPE     ,
+                RESUME_DATE     ,
+                ACTIVE            ,
+                NEXT_MEETINGS     ,
+                CREATED_BY,
+                UPDATED_ON,
+                WRONG,
+                UPDATED_BY ,
+                DEALER_ID         )
+        VALUES   
+                    (
+                :OLD.LEAD_ID  ,
+                'CRM_SETUP_MAST' ,
+                :OLD.CREATED_ON    ,
+                :OLD.SOURCES   ,
+                :OLD.ASSIGNED_TO,
+                :OLD.TASK_NO,
+                :OLD.REMARKS,
+                :OLD.STAGES ,
+                :OLD.TRANSFER_REASONS  ,
+                :OLD.ASSIGNED_BY       ,
+                :OLD.BUSINESS_TYPE     ,
+                :OLD.RESUME_DATE     ,
+                :OLD.ACTIVE            ,
+                :OLD.NEXT_MEETINGS     ,
+                :OLD.CREATED_BY,
+                :OLD.UPDATED_ON,
+                :OLD.WRONG,
+                :OLD.UPDATED_BY ,
+                :OLD.DEALER_ID  );
+    
+   END IF;
+ 
+END;
+          
+         
+  from CRM_SETUP_MAST 
+  WHERE 
+   NEXT_MEETINGS IN 'PENDING' AND BUSINESS_TYPE = :P_SITE_ID
+   AND (ASSIGNED_TO = :APP_USER OR :APP_USER IN ('MAJID','M.FARHAN','KHURRAM.KHAN','KH.AZHAR.SB','WAJEEH', 'HASHAAM','SHEHZAD','SHAHBAZ'))
+
+
+https://housing.faisalmovers.co:85/ords/f?p=10032:242:15256244376554:::::
