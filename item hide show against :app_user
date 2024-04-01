@@ -1,0 +1,14 @@
+var assignerItem = apex.item('P56_ASSIGNER');
+var user = apex.item('P56_USER');
+var userId = $v('P56_APP_USER');
+var showUserId = 'UMAR.FAROOQ';
+var showUserId1 = 'RIZWAN BAKHT';
+
+if (userId === showUserId || userId === showUserId1) {
+    assignerItem.show();
+    user.show();
+} else {
+    assignerItem.hide();
+    user.hide();
+}
+
