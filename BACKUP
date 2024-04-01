@@ -1,0 +1,61 @@
+SELECT
+    
+    CRM.LEAD_ID,
+    CRM.CONTACT_NO,
+
+ 
+  	
+    CRM.ASSIGNED_TO||' - '|| CASE WHEN ACTIVE='N' THEN  CRM.TASK_TITLE ||' -  '|| 'PENDING' || ' - '||CRM.RESUME_DATE||', '||CRM.STAGES||', '|| 'CREATED BY' || ', ' ||CRM.CREATED_BY
+     else CRM.TASK_TITLE || ' - ' ||CRM.STATUS|| ' - '||CRM.RESUME_DATE||', '||CRM.STAGES||', '|| 'CREATED BY' || ', ' ||CRM.CREATED_BY end   ACTIVE,
+    
+   CASE WHEN STATUS = 'IN-PROCESS' THEN 'apex-cal-darkblue'
+   when STATUS = 'COMPLETED' THEN 'apex-cal-lime'
+   when STATUS = 'PENDING' THEN 'apex-cal-gray'
+   end as css_class,
+
+
+
+    CRM. STATUS,
+     
+    CRM.REMARKS,
+    CRM.EMAIL,
+    CRM.CITY,
+    CRM.CREATED_ON,
+    CRM.SOURCES,
+    CRM.ASSIGNED_TO,
+    CRM.TASK_NO,
+  
+    
+    CRM.TRANSFER_REASONS,
+    CRM.ASSIGNED_BY,
+    CRM.BUSINESS_TYPE,
+    
+    CRM.SEEN_TYPE,
+  
+    CRM.LEAD_TIME,
+    CRM.JOB_TITLE,
+    CRM.COUNTRY,
+    CRM.SOURCE_TYPE,
+    CRM.NEXT_MEETINGS,
+    CRM.CREATED_BY,
+    CRM.OTHER_CITY,
+    CRM.UPDATED_ON,
+    CRM.DEALER_NAME,
+    CRM.DEALER_NUMBER,
+    
+    CRM.UPDATED_BY,
+    CRM.DEALER_ID,
+    
+    CRM.SITE_ID
+  
+FROM CRM_SETUP_MAST CRM 
+
+WHERE
+  (NVL(CRM.ASSIGNED_TO, CRM.CREATED_BY) IN
+    (CASE 
+      WHEN :P_USER_ID <> 'UMAR.FAROOQ' AND :P_USER_ID <> 'RIKZA' THEN :P_USER_ID 
+      ELSE NVL(CRM.ASSIGNED_TO, CRM.CREATED_BY) 
+    END))
+ AND CRM.ASSIGNED_TO = NVL(:P56_USER,CRM.ASSIGNED_TO)                     
+
+AND CRM.CRM_TASK IS NOT NULL
