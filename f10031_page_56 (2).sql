@@ -28,7 +28,7 @@ prompt APPLICATION 10031 - CRM
 -- Application Export:
 --   Application:     10031
 --   Name:            CRM
---   Date and Time:   15:23 Monday April 1, 2024
+--   Date and Time:   15:22 Tuesday April 2, 2024
 --   Exported By:     UMAR
 --   Flashback:       0
 --   Export Type:     Page Export
@@ -59,7 +59,7 @@ wwv_flow_api.create_page(
 ,p_autocomplete_on_off=>'OFF'
 ,p_page_template_options=>'#DEFAULT#'
 ,p_last_updated_by=>'UMAR'
-,p_last_upd_yyyymmddhh24miss=>'20240401150951'
+,p_last_upd_yyyymmddhh24miss=>'20240402152214'
 );
 wwv_flow_api.create_page_plug(
  p_id=>wwv_flow_api.id(154558600070991717)
@@ -127,21 +127,19 @@ wwv_flow_api.create_page_plug(
 'WHERE',
 '  (NVL(CRM.ASSIGNED_TO, CRM.CREATED_BY) IN',
 '    (CASE ',
-'      WHEN :P_USER_ID <> ''UMAR.FAROOQ'' AND :P_USER_ID <> ''RIZWAN BAKHT'' THEN :P_USER_ID ',
+'      WHEN :P_USER_ID NOT IN ( ''UMAR.FAROOQ'' , ''RIZWAN BAKHT'' ) THEN :P_USER_ID ',
 '     ',
 '      ELSE NVL(CRM.ASSIGNED_TO, CRM.CREATED_BY) ',
 '    END))',
-' AND CRM.ASSIGNED_TO = NVL(:P56_USER,CRM.ASSIGNED_TO)   ',
-' AND CRM.CREATED_BY = NVL(:P56_ASSIGNER, CREATED_BY)                  ',
-'',
-'AND CRM.CRM_TASK IS NOT NULL',
-'',
+'   ',
+' AND( CRM.ASSIGNED_TO = NVL(:P56_USER,:P_USER_ID)  ) ',
+' OR CRM.CREATED_BY = NVL(:P_USER_ID, CREATED_BY) ',
 '',
 '',
-''))
+'AND CRM.CRM_TASK IS NOT NULL'))
 ,p_lazy_loading=>false
 ,p_plug_source_type=>'NATIVE_CSS_CALENDAR'
-,p_ajax_items_to_submit=>'P56_USER,P56_ASSIGNER'
+,p_ajax_items_to_submit=>'P56_USER'
 ,p_plug_query_options=>'DERIVED_REPORT_COLUMNS'
 ,p_attribute_01=>'CREATED_ON'
 ,p_attribute_02=>'CREATED_ON'
@@ -202,7 +200,7 @@ wwv_flow_api.create_page_button(
 'BEGIN',
 'SELECT  COUNT(*) INTO V FROM CRM_SETUP_MAST WHERE ASSIGNED_TO =:P_USER_ID',
 'AND CRM_TASK IS NOT NULL;',
-'IF (   :P_USER_ID= ''UMAR.FAROOQ'' OR :P_USER_ID = ''RIZWAN BAKHT'' ) THEN',
+'IF ( :P_USER_ID IN (''UMAR.FAROOQ'',''RIZWAN BAKHT'')) THEN',
 'RETURN ',
 '     TRUE;',
 '',
@@ -235,35 +233,12 @@ wwv_flow_api.create_page_item(
 ,p_field_template=>wwv_flow_api.id(139006283866878073)
 ,p_item_template_options=>'#DEFAULT#'
 ,p_lov_display_extra=>'NO'
-,p_attribute_01=>'POPUP'
+,p_attribute_01=>'DIALOG'
 ,p_attribute_02=>'FIRST_ROWSET'
 ,p_attribute_03=>'N'
 ,p_attribute_04=>'N'
 ,p_attribute_05=>'Y'
 ,p_attribute_06=>'0'
-);
-wwv_flow_api.create_page_item(
- p_id=>wwv_flow_api.id(250709770607326128)
-,p_name=>'P56_ASSIGNER'
-,p_item_sequence=>20
-,p_item_plug_id=>wwv_flow_api.id(232868543199262207)
-,p_use_cache_before_default=>'NO'
-,p_prompt=>'Assigner'
-,p_display_as=>'NATIVE_SELECT_LIST'
-,p_lov=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'SELECT  DISTINCT CREATED_BY AS D , CREATED_BY AS R ',
-'FROM CRM_SETUP_MAST',
-'',
-'WHERE CREATED_BY = :P_USER_ID'))
-,p_lov_display_null=>'YES'
-,p_cHeight=>1
-,p_begin_on_new_line=>'N'
-,p_grid_column=>8
-,p_field_template=>wwv_flow_api.id(139006283866878073)
-,p_item_template_options=>'#DEFAULT#'
-,p_lov_display_extra=>'YES'
-,p_attribute_01=>'NONE'
-,p_attribute_02=>'N'
 );
 wwv_flow_api.create_page_item(
  p_id=>wwv_flow_api.id(252191023460314506)
@@ -329,17 +304,14 @@ wwv_flow_api.create_page_da_action(
 ,p_execute_on_page_init=>'N'
 ,p_action=>'NATIVE_JAVASCRIPT_CODE'
 ,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'var assignerItem = apex.item(''P56_ASSIGNER'');',
 'var user = apex.item(''P56_USER'');',
 'var userId = $v(''P56_APP_USER'');',
 'var showUserId = ''UMAR.FAROOQ'';',
 'var showUserId1 = ''RIZWAN BAKHT'';',
 '',
 'if (userId === showUserId || userId === showUserId1) {',
-'    assignerItem.show();',
 '    user.show();',
 '} else {',
-'    assignerItem.hide();',
 '    user.hide();',
 '}',
 '',
