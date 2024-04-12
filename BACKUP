@@ -12,7 +12,7 @@ SELECT
    when STATUS = 'COMPLETED' THEN 'apex-cal-lime'
    when STATUS = 'PENDING' THEN 'apex-cal-gray'
    end as css_class,
-
+ 
 
 
     CRM. STATUS,
